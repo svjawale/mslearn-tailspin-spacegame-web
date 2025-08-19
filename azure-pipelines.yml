@@ -70,11 +70,11 @@ steps:
 
 
 # Restore .NET project dependencies
-- task: DotNetCoreCLI@2
-  displayName: 'Restore project dependencies'
-  inputs:
-    command: 'restore'
-    projects: '**/*.csproj'
+#- task: DotNetCoreCLI@2
+#  displayName: 'Restore project dependencies'
+#  inputs:
+#    command: 'restore'
+#    projects: '**/*.csproj'
 
 # Build .NET project
 - task: DotNetCoreCLI@2
