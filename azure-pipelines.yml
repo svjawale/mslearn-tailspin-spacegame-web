@@ -44,6 +44,12 @@ steps:
   displayName: 'Write build info'
   workingDirectory: Tailspin.SpaceGame.Web/wwwroot
 
+- task: NuGetToolInstaller@1
+  displayName: 'Install NuGet'
+
+- script: dotnet nuget locals all --clear
+  displayName: 'Clear NuGet cache'
+
 # Restore .NET dependencies
 - task: DotNetCoreCLI@2
   displayName: 'Restore project dependencies'
