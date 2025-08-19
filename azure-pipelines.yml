@@ -49,8 +49,8 @@ steps:
   displayName: 'Install NuGet'
 
 # Clear NuGet cache
-- script: dotnet nuget locals all --clear
-  displayName: 'Clear NuGet cache'
+#- script: dotnet nuget locals all --clear
+#  displayName: 'Clear NuGet cache'
 
 # Restore NuGet packages using solution file (recommended)
 #- task: NuGetCommand@2
