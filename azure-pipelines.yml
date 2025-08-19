@@ -6,6 +6,8 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
+  dotnetSdkVersion: '8.0.413'
+  wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
 
 steps:
 # Use Node.js
@@ -16,10 +18,10 @@ steps:
 
 # Use .NET SDK
 - task: UseDotNet@2
-  displayName: 'Use .NET SDK 5.x'
+  displayName: 'Use .NET SDK $(dotnetSdkVersion)'
   inputs:
     packageType: sdk
-    version: '8.0.413'
+    version: '$(dotnetSdkVersion)'
 
 # Install npm dependencies
 - task: Npm@1
@@ -29,7 +31,7 @@ steps:
     verbose: true
 
 # Compile Sass assets
-- script: './node_modules/.bin/node-sass Tailspin.SpaceGame.Web/wwwroot --output Tailspin.SpaceGame.Web/wwwroot'
+- script: './node_modules/.bin/node-sass $(wwwrootDir) --output $(wwwrootDir)'
   displayName: 'Compile Sass assets'
 
 # Run gulp tasks
@@ -42,7 +44,7 @@ steps:
 # Write build info
 - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
   displayName: 'Write build info'
-  workingDirectory: Tailspin.SpaceGame.Web/wwwroot
+  workingDirectory: $(wwwrootDir)
 
 # Install NuGet CLI
 - task: NuGetToolInstaller@1
@@ -78,19 +80,19 @@ steps:
 
 # Build .NET project
 - task: DotNetCoreCLI@2
-  displayName: 'Build the project - Release'
+  displayName: 'Build the project - $(buildConfiguration)'
   inputs:
     command: 'build'
     arguments: '--no-restore --configuration $(buildConfiguration)'
     projects: '**/*.csproj'
 
 - task: DotNetCoreCLI@2
-  displayName: 'Publish the project - Release'
+  displayName: 'Publish the project - $(buildConfiguration)'
   inputs:
     command: 'publish'
     projects: '**/*.csproj'
     publishWebProjects: false
-    arguments: '--no-build --configuration Release --output $(Build.ArtifactStagingDirectory)/Release'
+    arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
     zipAfterPublish: true
 
 - task: PublishBuildArtifacts@1
