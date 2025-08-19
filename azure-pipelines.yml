@@ -2,7 +2,7 @@ trigger:
 - '*'
 
 pool:
-  vmImage: 'ubuntu-22.04'
+  vmImage: ubuntu-latest
 
 variables:
   buildConfiguration: 'Release'
@@ -19,7 +19,7 @@ steps:
   displayName: 'Use .NET SDK 6.x'
   inputs:
     packageType: sdk
-    version: '6.0.100'
+    version: '6.x'
 
 # Install npm dependencies
 - task: Npm@1
@@ -53,14 +53,21 @@ steps:
   displayName: 'Clear NuGet cache'
 
 # Restore NuGet packages using solution file (recommended)
-- task: NuGetCommand@2
-  displayName: 'Restore NuGet packages'
-  inputs:
-    command: 'restore'
-    restoreSolution: '**/*.sln'
-    feedsToUse: 'select'
+#- task: NuGetCommand@2
+#  displayName: 'Restore NuGet packages'
+#  inputs:
+#    command: 'restore'
+#    restoreSolution: '**/*.sln'
+#    feedsToUse: 'select'
     # Optional: add your Azure Artifacts feed ID if using private feeds
     # vstsFeed: '<your-feed-id>'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Restore project dependencies'
+  inputs:
+    command: 'restore'
+    projects: '**/*.sln'
+
 
 # Restore .NET project dependencies
 - task: DotNetCoreCLI@2
