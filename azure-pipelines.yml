@@ -16,10 +16,10 @@ steps:
 
 # Use .NET SDK
 - task: UseDotNet@2
-  displayName: 'Use .NET SDK 6.x'
+  displayName: 'Use .NET SDK 5.x'
   inputs:
     packageType: sdk
-    version: '6.x'
+    version: '5.x'
 
 # Install npm dependencies
 - task: Npm@1
