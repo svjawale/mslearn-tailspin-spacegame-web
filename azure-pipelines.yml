@@ -8,41 +8,78 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+# Use Node.js
 - task: UseNode@1
   displayName: 'Use Node.js 16.x'
   inputs:
     version: '16.x'
-	
+
+# Use .NET SDK
 - task: UseDotNet@2
-  displayName: 'Use .NET SDK 8.x'
+  displayName: 'Use .NET SDK 5.x'
   inputs:
     packageType: sdk
     version: '8.0.413'
 
+# Install npm dependencies
 - task: Npm@1
   displayName: 'Run npm install'
   inputs:
+    command: 'install'
     verbose: true
 
+# Compile Sass assets
 - script: './node_modules/.bin/node-sass Tailspin.SpaceGame.Web/wwwroot --output Tailspin.SpaceGame.Web/wwwroot'
   displayName: 'Compile Sass assets'
 
-- task: gulp@1
+# Run gulp tasks
+- task: Gulp@1
   displayName: 'Run gulp tasks'
+  inputs:
+    gulpFile: 'gulpfile.js'
+    targets: 'default'
 
+# Write build info
 - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
   displayName: 'Write build info'
   workingDirectory: Tailspin.SpaceGame.Web/wwwroot
+
+# Install NuGet CLI
+- task: NuGetToolInstaller@1
+  displayName: 'Install NuGet'
+
+# Clear NuGet cache
+#- script: dotnet nuget locals all --clear
+#  displayName: 'Clear NuGet cache'
+
+# Restore NuGet packages using solution file (recommended)
+#- task: NuGetCommand@2
+#  displayName: 'Restore NuGet packages'
+#  inputs:
+#    command: 'restore'
+#    restoreSolution: '**/*.sln'
+#    feedsToUse: 'select'
+    # Optional: add your Azure Artifacts feed ID if using private feeds
+    # vstsFeed: '<your-feed-id>'
 
 - task: DotNetCoreCLI@2
   displayName: 'Restore project dependencies'
   inputs:
     command: 'restore'
-    projects: '**/*.csproj'
+    projects: '**/*.sln'
 
+
+# Restore .NET project dependencies
+#- task: DotNetCoreCLI@2
+#  displayName: 'Restore project dependencies'
+#  inputs:
+#    command: 'restore'
+#    projects: '**/*.csproj'
+
+# Build .NET project
 - task: DotNetCoreCLI@2
   displayName: 'Build the project - Release'
   inputs:
     command: 'build'
-    arguments: '--no-restore --configuration Release'
+    arguments: '--no-restore --configuration $(buildConfiguration)'
     projects: '**/*.csproj'
